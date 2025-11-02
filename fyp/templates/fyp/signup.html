@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Signup</title>
+    {% load static %}
+    <!-- Add this line -->
+    <link rel="stylesheet" href="{% static 'fyp/style.css' %}" />
+  </head>
+  <body>
+    <h2>Sign Up</h2>
+    <form method="post">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="password" name="password2" placeholder="Confirm Password" required />
+      <br>
+      <h4>Select your interests:</h4>
+      <input type="checkbox" name="interests" value="clothing"> Clothing
+      <input type="checkbox" name="interests" value="food"> Food
+      <input type="checkbox" name="interests" value="books"> Books
+      <br>
+      <button type="submit">Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'fyp/style.css' %}" />
+</head>
+<body>
+    <h2>Welcome to your dashboard, {{ user_profile.user.username }}!</h2>
+    <p>Your preferences: {{ user_profile.preferences }}</p>
+
+    <h3>Recommended Businesses</h3>
+    {% if businesses %}
+        <ul>
+            {% for business in businesses %}
+                <li>{{ business.name }} - {{ business.description }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No recommended businesses at the moment.</p>
+    {% endif %}
+
+    <h3>Recommended Events</h3>
+    {% if events %}
+        <ul>
+            {% for event in events %}
+                <li>{{ event.name }} - {{ event.description }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No recommended events at the moment.</p>
+    {% endif %}
+
+    <p><a href="{% url 'logout' %}">Logout</a></p>
+</body>
+</html>
