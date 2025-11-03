@@ -1,36 +1,72 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'fyp/style.css' %}" />
-</head>
-<body>
-    <h2>Welcome to your dashboard, {{ user_profile.user.username }}!</h2>
-    <p>Your preferences: {{ user_profile.preferences }}</p>
+{% extends 'fyp/base.html' %}
 
-    <h3>Recommended Businesses</h3>
-    {% if businesses %}
-        <ul>
-            {% for business in businesses %}
-                <li>{{ business.name }} - {{ business.description }}</li>
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h2>Welcome, {{ user_profile.user.username }}!</h2>
+    <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Your Preferences</h5>
+        <p class="card-text">
+            {% for preference in user_profile.preferences %}
+                <span class="badge bg-primary">{{ preference }}</span>
             {% endfor %}
-        </ul>
-    {% else %}
-        <p>No recommended businesses at the moment.</p>
-    {% endif %}
+        </p>
+        <h5 class="card-title mt-3">Your Points</h5>
+        <p class="card-text">{{ user_profile.points }}</p>
+    </div>
+</div>
 
-    <h3>Recommended Events</h3>
-    {% if events %}
-        <ul>
-            {% for event in events %}
-                <li>{{ event.name }} - {{ event.description }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No recommended events at the moment.</p>
-    {% endif %}
+<div class="mb-4">
+    <a href="{% url 'add_business' %}" class="btn btn-success">Add New Business</a>
+    <a href="{% url 'add_event' %}" class="btn btn-info">Add New Event</a>
+</div>
 
-    <p><a href="{% url 'logout' %}">Logout</a></p>
-</body>
-</html>
+<div class="row">
+    <div class="col-md-6">
+        <h3>Recommended Businesses</h3>
+        {% if businesses %}
+            <div class="list-group">
+                {% for business in businesses %}
+                    <a href="{% url 'business_detail' business.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ business.name }}</h5>
+                            <small><span class="badge bg-secondary">{{ business.category }}</span></small>
+                        </div>
+                        <p class="mb-1">{{ business.description }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No recommended businesses based on your preferences yet.
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <h3>Recommended Events</h3>
+        {% if events %}
+            <div class="list-group">
+                {% for event in events %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ event.name }}</h5>
+                            <small><span class="badge bg-secondary">{{ event.category }}</span></small>
+                        </div>
+                        <p class="mb-1">{{ event.description }}</p>
+                        <small>at {{ event.business.name }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No recommended events based on your preferences yet.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ business.name }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'fyp/style.css' %}" />
+</head>
+<body>
+    <h2>{{ business.name }}</h2>
+    <p>{{ business.description }}</p>
+    <p>Category: {{ business.category }}</p>
+    <p>Owner: {{ business.owner.username }}</p>
+
+    <hr>
+
+    <h3>Reviews</h3>
+    {% if reviews %}
+        <ul>
+            {% for review in reviews %}
+                <li>
+                    <strong>{{ review.user.username }}</strong> (Rating: {{ review.rating }}/5)
+                    <p>{{ review.comment }}</p>
+                    <small>{{ review.created_at }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No reviews yet. Be the first to review!</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Leave a Review</h3>
+    <form method="post">
+        {% csrf_token %}
+        <label for="rating">Rating:</label>
+        <select name="rating" id="rating" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+        <br>
+        <textarea name="comment" placeholder="Write your review here..." required></textarea>
+        <br>
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <p><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+</body>
+</html>

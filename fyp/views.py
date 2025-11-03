@@ -57,5 +57,99 @@ def dashboard_view(request):
     }
     return render(request, 'fyp/dashboard.html', context)
 
+@login_required
+def add_business_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        category = request.POST.get('category')
+        
+        if not name or not description or not category:
+            messages.error(request, "All fields are required.")
+        else:
+            Business.objects.create(
+                name=name,
+                description=description,
+                category=category,
+                owner=request.user
+            )
+            messages.success(request, "Business submitted for verification.")
+            return redirect('dashboard')
+            
+    return render(request, 'fyp/add_business.html')
+
+@login_required
+def add_event_view(request):
+    user_businesses = Business.objects.filter(owner=request.user)
+    if not user_businesses:
+        messages.error(request, "You must own a business to create an event.")
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        category = request.POST.get('category')
+        business_id = request.POST.get('business')
+
+        if not name or not description or not category or not business_id:
+            messages.error(request, "All fields are required.")
+        else:
+            try:
+                business = Business.objects.get(id=business_id, owner=request.user)
+                Event.objects.create(
+                    name=name,
+                    description=description,
+                    category=category,
+                    business=business
+                )
+                messages.success(request, "Event submitted successfully.")
+                return redirect('dashboard')
+            except Business.DoesNotExist:
+                messages.error(request, "Invalid business selected.")
+
+    context = {
+        'user_businesses': user_businesses
+    }
+    return render(request, 'fyp/add_event.html', context)
+
+from django.shortcuts import get_object_or_404
+from .models import Business, Review, Event, UserProfile
+
+@login_required
+def business_detail_view(request, business_id):
+    business = get_object_or_404(Business, id=business_id)
+    
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+
+        if not rating or not comment:
+            messages.error(request, "Rating and comment are required.")
+        else:
+            if Review.objects.filter(business=business, user=request.user).exists():
+                messages.error(request, "You have already reviewed this business.")
+            else:
+                Review.objects.create(
+                    business=business,
+                    user=request.user,
+                    rating=rating,
+                    comment=comment
+                )
+                messages.success(request, "Review submitted successfully.")
+                return redirect('business_detail', business_id=business.id)
+
+    reviews = business.reviews.all().order_by('-created_at')
+    context = {
+        'business': business,
+        'reviews': reviews
+    }
+    return render(request, 'fyp/business_detail.html', context)
+
 def home_view(request):
-    return render(request, 'fyp/home.html')
+    businesses = Business.objects.all()
+    events = Event.objects.all()
+    context = {
+        'businesses': businesses,
+        'events': events
+    }
+    return render(request, 'fyp/home.html', context)

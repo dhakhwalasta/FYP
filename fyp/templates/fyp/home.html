@@ -1,12 +1,48 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Home</title>
     <link rel="stylesheet" href="{% static 'fyp/style.css' %}" />
-  </head>
-  <body>
+</head>
+<body>
     <h2>Welcome to Local Business Finder</h2>
-    <a href="{% url 'logout' %}">Logout</a>
-  </body>
+
+    <nav>
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'signup' %}">Sign Up</a>
+        {% endif %}
+    </nav>
+
+    <hr>
+
+    <h3>All Businesses</h3>
+    {% if businesses %}
+        <ul>
+            {% for business in businesses %}
+                <li><a href="{% url 'business_detail' business.id %}">{{ business.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No businesses have been listed yet.</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>All Events</h3>
+    {% if events %}
+        <ul>
+            {% for event in events %}
+                <li>{{ event.name }} (at {{ event.business.name }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No events have been listed yet.</p>
+    {% endif %}
+
+</body>
 </html>

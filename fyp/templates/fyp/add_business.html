@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Business</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'fyp/style.css' %}" />
+</head>
+<body>
+    <h2>Add a New Business</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Business Name" required />
+        <textarea name="description" placeholder="Description" required></textarea>
+        <select name="category" required>
+            <option value="" disabled selected>Select a category</option>
+            <option value="clothing">Clothing</option>
+            <option value="food">Food</option>
+            <option value="books">Books</option>
+        </select>
+        <button type="submit">Submit for Verification</button>
+    </form>
+    <p><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+</body>
+</html>
