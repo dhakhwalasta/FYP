@@ -46,7 +46,7 @@ from .models import UserProfile, Business, Event
 
 @login_required
 def dashboard_view(request):
-    user_profile = UserProfile.objects.get(user=request.user)
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     preferences = user_profile.preferences
     businesses = Business.objects.filter(category__in=preferences)
     events = Event.objects.filter(category__in=preferences)
@@ -144,6 +144,14 @@ def business_detail_view(request, business_id):
         'reviews': reviews
     }
     return render(request, 'fyp/business_detail.html', context)
+
+@login_required
+def owner_dashboard_view(request):
+    businesses = Business.objects.filter(owner=request.user)
+    context = {
+        'businesses': businesses
+    }
+    return render(request, 'fyp/owner_dashboard.html', context)
 
 def home_view(request):
     businesses = Business.objects.all()

@@ -1,0 +1,48 @@
+{% extends 'fyp/base.html' %}
+
+{% block title %}Business Owner Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h2>Owner Dashboard</h2>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to User Dashboard</a>
+</div>
+
+<h3>Your Businesses</h3>
+
+{% if businesses %}
+    {% for business in businesses %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">{{ business.name }}</h4>
+            </div>
+            <div class="card-body">
+                <p>{{ business.description }}</p>
+                <h5 class="mt-4">Reviews for this Business</h5>
+                {% with business.reviews.all as reviews %}
+                    {% if reviews %}
+                        <ul class="list-group">
+                            {% for review in reviews %}
+                                <li class="list-group-item">
+                                    <strong>{{ review.user.username }}</strong> (Rating: {{ review.rating }}/5)
+                                    <p class="mb-1">{{ review.comment }}</p>
+                                    <small class="text-muted">{{ review.created_at|date:"F d, Y" }}</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="alert alert-info" role="alert">
+                            This business has no reviews yet.
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info" role="alert">
+        You have not registered any businesses yet. <a href="{% url 'add_business' %}" class="alert-link">Add one now</a>.
+    </div>
+{% endif %}
+
+{% endblock %}
