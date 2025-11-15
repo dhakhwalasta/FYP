@@ -154,10 +154,4 @@ def owner_dashboard_view(request):
     return render(request, 'fyp/owner_dashboard.html', context)
 
 def home_view(request):
-    businesses = Business.objects.all()
-    events = Event.objects.all()
-    context = {
-        'businesses': businesses,
-        'events': events
-    }
-    return render(request, 'fyp/home.html', context)
+    return render(request, 'fyp/landingpage.html')
